@@ -9,7 +9,7 @@
 */
 
 int main(){
-    int *ptr = initmem(1000, 1);
+    int *ptr = initmem(1000, first_fit);
     printf("%p \n", ptr);
 
     int number_allocated_block = nblocalloues();

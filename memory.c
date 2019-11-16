@@ -20,7 +20,7 @@ typedef struct Bloc {
 }bloc;
 
 
-int STRATEGY = -1;
+enum strategy STRATEGY = -1;
 int MEMORY_SIZE = -1;
 
 bloc *FIRST_BLOC = NULL; 
@@ -38,8 +38,6 @@ int splitBloc(struct Bloc *original_bloc, int new_bloc_size){
     memcpy(&new_bloc->virtual_start, &original_bloc->virtual_start, sizeof(int));
     new_bloc->previous = original_bloc->previous; 
     new_bloc->next = original_bloc;
-
-    printf("new block next %p\n", new_bloc->next);
 
     /* original_bloc.start = new_bloc.start + ? */
     original_bloc->virtual_start = new_bloc->virtual_start + new_bloc->size;
@@ -61,8 +59,8 @@ int mergeBloc(struct Bloc bloc1, struct Bloc bloc2){
 
 /* PUBLIC FUNCTION */
 
-int * initmem(int size, int strategy) {
-    int *ptr =  (int*) malloc(8 * size);
+int * initmem(int size, enum strategy strategy) {
+    int *ptr =  (int*) malloc(size);
 
     FIRST_BLOC = (bloc*) calloc(1, sizeof(*FIRST_BLOC));
 
@@ -73,7 +71,7 @@ int * initmem(int size, int strategy) {
     FIRST_BLOC->is_free = 1;
     FIRST_BLOC->next = NULL;
     FIRST_BLOC->previous = NULL;
-    /* FIRST_BLOC->start = (int) ptr; */ // TODO adjust start wehn spliting & merging bloc
+    /* FIRST_BLOC->start = (int) ptr; */ // TODO adjust start when spliting & merging bloc
     FIRST_BLOC->virtual_start = 0;
     FIRST_BLOC->size = size;
 

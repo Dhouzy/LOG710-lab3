@@ -3,10 +3,13 @@
 
 /* https://www.cs.swarthmore.edu/~newhall/unixhelp/howto_C_libraries.html */
 
-// Return success or error
-extern int * initmem(int size, int strategy);
+enum strategy{first_fit, best_fit, worst_fit};
 
-// Return start location of the newly created memory block (pBloc)
+
+// Return success or error
+extern int * initmem(int size, enum strategy strategy);
+
+// Return start location of the block (pBloc)
 extern int alloumem(int size);
 
 extern int libermem(int pBloc);
@@ -28,3 +31,4 @@ extern int mem_small_free();
 
 // Est-ce qu’un octet (byte) particulier est alloué
 extern int mem_est_alloue(int pByte);
+
