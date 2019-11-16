@@ -32,10 +32,14 @@ bloc * find_first_allocation_fit(int size);
 
 /* INTERNAL DATA STUCTURE */
 
-// Create a new allocated bloc at the start of the current bloc
+// Create a new allocated bloc at the start of the selected bloc
 bloc * split_bloc(bloc *original_bloc, int new_bloc_size){
-    bloc *new_bloc = (bloc*) calloc(1, sizeof(*new_bloc));
 
+    if(original_bloc->size < new_bloc_size){
+	return NULL;
+    }
+
+    bloc *new_bloc = (bloc*) calloc(1, sizeof(*new_bloc));
     // Create new bloc
     new_bloc->is_free = 0;
     new_bloc->size = new_bloc_size;
@@ -43,8 +47,6 @@ bloc * split_bloc(bloc *original_bloc, int new_bloc_size){
     memcpy(&new_bloc->virtual_start, &original_bloc->virtual_start, sizeof(int));
     new_bloc->previous = original_bloc->previous; 
     new_bloc->next = original_bloc;
-    
-    
 
     // Change the next pointeur of the previous bloc of the original one
     if (original_bloc->previous != NULL){
@@ -52,14 +54,12 @@ bloc * split_bloc(bloc *original_bloc, int new_bloc_size){
     }
 
     // Adjust the original bloc
-
     // FIXME If original_bloc size become 0, delete the bloc
     /* original_bloc.start = new_bloc.start + ? */
     original_bloc->virtual_start = new_bloc->virtual_start + new_bloc->size;
     original_bloc->size = original_bloc->size - new_bloc->size;
     original_bloc->previous = new_bloc;
     
-
     if (new_bloc->virtual_start == 0){
 	FIRST_BLOC = new_bloc;
     }
@@ -95,22 +95,40 @@ int * initmem(int size, enum strategy strategy) {
 }
 
 int nblocalloues(){
-    int counter_allocated_block = 0;
+    int counter_allocated_bloc = 0;
     bloc *current_bloc = FIRST_BLOC;
     
     while(current_bloc->next != NULL){
-
 	if (current_bloc->is_free == 0){
-	    counter_allocated_block++;
+	    counter_allocated_bloc++;
 	}
 	current_bloc = current_bloc->next;
     }
 
     if (current_bloc->is_free == 0){
-	counter_allocated_block ++;
+	counter_allocated_bloc ++;
     }
 
-    return counter_allocated_block;
+    return counter_allocated_bloc;
+}
+
+int nbloclibres(){
+    int counter_free_bloc = 0;
+    bloc *current_bloc = FIRST_BLOC;
+    
+    while(current_bloc->next != NULL){
+	if (current_bloc->is_free == 1){
+	    counter_free_bloc++;
+	}
+
+	current_bloc = current_bloc->next;
+    }
+
+    if (current_bloc->is_free == 1){
+	counter_free_bloc ++;
+    }
+
+    return counter_free_bloc;
 }
 
 int alloumem(int size){

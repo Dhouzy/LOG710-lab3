@@ -15,6 +15,11 @@ int main(){
     int virt_start = alloumem(250);
     printf("virt_start %d\n", virt_start);
 
-    int number_allocated_block = nblocalloues();
-    printf("Nombre de bloc alloue: %d \n", number_allocated_block);
+    int number_allocated_bloc = nblocalloues();
+    printf("Nombre de bloc alloue: %d \n", number_allocated_bloc);
+
+
+    int number_free_bloc = nbloclibres();
+    printf("Nombre de bloc free: %d \n", number_free_bloc);
+
 }
