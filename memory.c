@@ -131,6 +131,41 @@ int nbloclibres(){
     return counter_free_bloc;
 }
 
+int memlibre(){
+    int counter_free_mem = 0;
+    bloc *current_bloc = FIRST_BLOC;
+    
+    while(current_bloc->next != NULL){
+	if (current_bloc->is_free == 1){
+	    counter_free_mem += current_bloc->size;
+	}
+	current_bloc = current_bloc->next;
+    }
+
+    if (current_bloc->is_free == 1){
+	counter_free_mem += current_bloc->size;
+    }
+
+    return counter_free_mem;
+}
+
+int mem_pgrand_libre(){
+    int biggest_free_bloc = -1;
+    bloc *current_bloc = FIRST_BLOC;
+
+    while(current_bloc->next != NULL){
+	if (current_bloc->is_free == 1 && current_bloc->size > biggest_free_bloc){
+	    biggest_free_bloc = current_bloc->size;
+	}
+	current_bloc = current_bloc->next;
+    }
+
+    if (current_bloc->is_free == 1 && current_bloc->size > biggest_free_bloc){
+	biggest_free_bloc = current_bloc->size;
+    }
+    return biggest_free_bloc;
+}
+
 int alloumem(int size){
     bloc * free_bloc = NULL;
     bloc * new_bloc = NULL;
@@ -150,6 +185,7 @@ int alloumem(int size){
     }
     return new_bloc->virtual_start;  // TODO return the memory address
 }
+
 
 /*
   Return the first free bloc that can be split to fit the future bloc 
