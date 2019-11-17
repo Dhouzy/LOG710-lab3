@@ -13,9 +13,11 @@ int main(){
 
     int start1 = alloumem(800);
     int start2 = alloumem(200);
+   /* int number_free_bloc_test1 = nbloclibres(); */
+   /*  printf("Nombre de bloc libre: %d \n", number_free_bloc_test1); */
     
-    libermem(start1);
-    libermem(start2);
+    /* libermem(start1); */
+    /* libermem(start2); */
 
 
     int number_allocated_bloc = nblocalloues();

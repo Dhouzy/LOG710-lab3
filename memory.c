@@ -54,12 +54,20 @@ bloc * split_bloc(bloc *original_bloc, int new_bloc_size){
 	original_bloc->previous->next = new_bloc;
     }
 
-    // Adjust the original bloc
-    // FIXME If original_bloc size become 0, delete the bloc
-    original_bloc->start = new_bloc->start + new_bloc->size;
-    original_bloc->virtual_start = new_bloc->virtual_start + new_bloc->size;
-    original_bloc->size = original_bloc->size - new_bloc->size;
-    original_bloc->previous = new_bloc;
+    // Remove the original bloc if the new one thake the whole size
+    if ((original_bloc->size - new_bloc->size) == 0 ){
+	new_bloc->next = original_bloc->next;
+	if(original_bloc->next != NULL){
+	    original_bloc->next->previous = new_bloc;
+	}
+
+    }else{
+	// Adjust the original bloc
+	original_bloc->start = new_bloc->start + new_bloc->size;
+	original_bloc->virtual_start = new_bloc->virtual_start + new_bloc->size;
+	original_bloc->size = original_bloc->size - new_bloc->size;
+	original_bloc->previous = new_bloc;
+    }
     
     if (new_bloc->virtual_start == 0){
 	FIRST_BLOC = new_bloc;
@@ -89,7 +97,7 @@ int merge_bloc(bloc * bloc1, bloc * bloc2){
     first_bloc->size += second_bloc->size;
     first_bloc->next = second_bloc->next;
     free(second_bloc);
-    
+
     return 1;
 }
 
@@ -113,13 +121,13 @@ bloc* search_bloc_by_address(int pBloc){
 int free_bloc(bloc* bloc_to_free){
     bloc_to_free->is_free = 1;
 
-    //Check if next bloc is free if so merge it
+    // Check if next bloc is free if so merge it
     if(bloc_to_free->next != NULL && bloc_to_free->next->is_free == 1){
 	printf("merging bloc to free with next bloc \n");
 	merge_bloc(bloc_to_free, bloc_to_free->next);
     }
 
-    //Check if previous bloc is free if so merge it
+    // Check if previous bloc is free if so merge it
     if(bloc_to_free->previous != NULL && bloc_to_free->previous->is_free == 1){
 	printf("merging bloc to free with previous bloc \n");
 	merge_bloc(bloc_to_free, bloc_to_free->previous);
@@ -205,7 +213,7 @@ int memlibre(){
 }
 
 int mem_pgrand_libre(){
-    int biggest_free_bloc = -1;
+    int biggest_free_bloc = 0;
     bloc *current_bloc = FIRST_BLOC;
 
     while(current_bloc->next != NULL){
