@@ -10,17 +10,18 @@
 
 int main(){
     int *ptr = initmem(1000, first_fit);
-    int virt_start = 0;
 
-    virt_start = alloumem(100);
-    virt_start = alloumem(200);
+    int start1 = alloumem(800);
+    int start2 = alloumem(200);
+    
+    libermem(start1);
+    libermem(start2);
 
-    printf("virt_start %d\n", virt_start);
 
     int number_allocated_bloc = nblocalloues();
     printf("Nombre de bloc alloue: %d \n", number_allocated_bloc);
 
-    int number_free_bloc = nbloclibres();
+   int number_free_bloc = nbloclibres();
     printf("Nombre de bloc libre: %d \n", number_free_bloc);
 
     int free_memory = memlibre();

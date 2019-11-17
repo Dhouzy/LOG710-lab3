@@ -68,9 +68,64 @@ bloc * split_bloc(bloc *original_bloc, int new_bloc_size){
     return new_bloc;
 }
 
-int mergeBloc(bloc * bloc1, bloc * bloc2){
+int merge_bloc(bloc * bloc1, bloc * bloc2){
+    //  bloc1 should be before bloc 2 (address wise)
+    bloc* second_bloc;
+    bloc* first_bloc;
+    if(bloc1->start < bloc2->start){
+	first_bloc = bloc1;
+	second_bloc = bloc2;
+    } else {
+	first_bloc = bloc2;
+	second_bloc = bloc1;
+    }
+
     //Verify both bloc are adjacent.
-    return -1;
+    if (first_bloc->start + first_bloc->size != second_bloc->start) {
+	return -1;
+    }
+
+    // Merge
+    first_bloc->size += second_bloc->size;
+    first_bloc->next = second_bloc->next;
+    free(second_bloc);
+    
+    return 1;
+}
+
+bloc* search_bloc_by_address(int pBloc){
+    bloc *current_bloc = FIRST_BLOC;
+
+    while(current_bloc->next != NULL){
+	if (current_bloc->start == pBloc){
+	    return current_bloc;
+	}
+	current_bloc = current_bloc->next;
+    }
+
+    if (current_bloc->start == pBloc){
+	return current_bloc;
+    }
+
+    return NULL;
+}
+
+int free_bloc(bloc* bloc_to_free){
+    bloc_to_free->is_free = 1;
+
+    //Check if next bloc is free if so merge it
+    if(bloc_to_free->next != NULL && bloc_to_free->next->is_free == 1){
+	printf("merging bloc to free with next bloc \n");
+	merge_bloc(bloc_to_free, bloc_to_free->next);
+    }
+
+    //Check if previous bloc is free if so merge it
+    if(bloc_to_free->previous != NULL && bloc_to_free->previous->is_free == 1){
+	printf("merging bloc to free with previous bloc \n");
+	merge_bloc(bloc_to_free, bloc_to_free->previous);
+    }
+    
+    return 1;
 }
 
 
@@ -88,7 +143,7 @@ int * initmem(int size, enum strategy strategy) {
     FIRST_BLOC->is_free = 1;
     FIRST_BLOC->next = NULL;
     FIRST_BLOC->previous = NULL;
-    FIRST_BLOC->start = (intptr_t) ptr;// TODO adjust start when spliting & merging bloc
+    FIRST_BLOC->start = (intptr_t) ptr;
     FIRST_BLOC->virtual_start = 0;
     FIRST_BLOC->size = size;
 
@@ -121,7 +176,6 @@ int nbloclibres(){
 	if (current_bloc->is_free == 1){
 	    counter_free_bloc++;
 	}
-
 	current_bloc = current_bloc->next;
     }
 
@@ -180,13 +234,21 @@ int alloumem(int size){
 	new_bloc = split_bloc(free_bloc, size);
 	break;
 	
-    default : 
+    default: 
 	printf("ERROR, unknown strategy\n");
 	return -1;
     }
     return new_bloc->start;
 }
 
+int libermem(int pBloc){
+    bloc* bloc_to_free = search_bloc_by_address(pBloc);
+    if (bloc_to_free == NULL){
+	return -1;
+    } else{
+	return free_bloc(bloc_to_free);
+    }
+}
 
 /*
   Return the first free bloc that can be split to fit the future bloc 
