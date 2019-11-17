@@ -194,6 +194,23 @@ int nbloclibres(){
     return counter_free_bloc;
 }
 
+int mem_small_free(int maxTaillePetit){
+    int counter_small_bloc = 0;
+    bloc *current_bloc = FIRST_BLOC;
+    
+    while(current_bloc->next != NULL){
+	if (current_bloc->size < maxTaillePetit){
+	    counter_small_bloc++;
+	}
+	current_bloc = current_bloc->next;
+    }
+
+    if (current_bloc->size < maxTaillePetit){
+	counter_small_bloc ++;
+    }
+    return counter_small_bloc;
+}
+
 int memlibre(){
     int counter_free_mem = 0;
     bloc *current_bloc = FIRST_BLOC;
