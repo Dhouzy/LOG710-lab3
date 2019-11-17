@@ -31,6 +31,7 @@ bloc *FIRST_BLOC = NULL;
 
 bloc * find_first_allocation_fit(int size);
 bloc * find_best_allocation_fit(int size);
+bloc * find_worst_allocation_fit(int size);
 
 
 /* INTERNAL DATA STUCTURE */
@@ -271,23 +272,22 @@ int alloumem(int size){
     switch(STRATEGY) {
     case first_fit:
 	free_bloc = find_first_allocation_fit(size);
-	if(free_bloc == NULL){
-	    return -1;
-	}
-	new_bloc = split_bloc(free_bloc, size);
-	break;
+
     case best_fit:
 	free_bloc = find_best_allocation_fit(size);
-	if(free_bloc == NULL){
-	    return -1;
-	}
-	new_bloc = split_bloc(free_bloc, size);
-	break;
-	
+
+    case worst_fit:
+	free_bloc = find_worst_allocation_fit(size);
+
     default: 
 	printf("ERROR, unknown strategy\n");
 	return -1;
     }
+
+    if(free_bloc == NULL){
+	return -1;
+    }
+    new_bloc = split_bloc(free_bloc, size);
     return new_bloc->start;
 }
 
@@ -334,8 +334,29 @@ bloc * find_best_allocation_fit(int size){
 	current_best_bloc = current_bloc;
 	additionnal_size = current_bloc->size - size;
     }
-
     /* printf("current_best_bloc size: %d\n", current_best_bloc->size); */
 
     return current_best_bloc;
+}
+
+bloc * find_worst_allocation_fit(int size) {
+    bloc* current_bloc = FIRST_BLOC;
+    bloc* current_best_bloc = NULL;
+    int additionnal_size = -INT_MAX;
+
+    while (current_bloc->next!= NULL) {
+	if (current_bloc->is_free && current_bloc->size >= size && (current_bloc->size - size) > additionnal_size){
+	    current_best_bloc = current_bloc;
+	    additionnal_size = current_bloc->size - size;
+	}
+	current_bloc = current_bloc->next;
+    }
+    if (current_bloc->is_free && current_bloc->size >= size && current_bloc->size - size > additionnal_size){
+	current_best_bloc = current_bloc;
+	additionnal_size = current_bloc->size - size;
+    }
+    /* printf("current_best_bloc size: %d\n", current_best_bloc->size); */
+
+    return current_best_bloc;
+    
 }
