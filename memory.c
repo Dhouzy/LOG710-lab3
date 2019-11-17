@@ -211,6 +211,22 @@ int mem_small_free(int maxTaillePetit){
     return counter_small_bloc;
 }
 
+int mem_est_alloue(int pByte){
+    bloc *current_bloc = FIRST_BLOC;
+    
+    while(current_bloc->next != NULL){
+	if (!current_bloc->is_free && pByte >= current_bloc->start && pByte <=  (current_bloc->start + current_bloc->size)){
+	    return 1;
+	}
+	current_bloc = current_bloc->next;
+    }
+
+    if (!current_bloc->is_free && pByte >= current_bloc->start && pByte <=  (current_bloc->start + current_bloc->size)){
+	return 1;
+    }
+    return -1;
+}
+
 int memlibre(){
     int counter_free_mem = 0;
     bloc *current_bloc = FIRST_BLOC;
@@ -274,6 +290,8 @@ int libermem(int pBloc){
 	return free_bloc(bloc_to_free);
     }
 }
+
+
 
 /*
   Return the first free bloc that can be split to fit the future bloc 

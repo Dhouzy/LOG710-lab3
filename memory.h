@@ -27,7 +27,7 @@ extern int memlibre();
 extern int mem_pgrand_libre();
 
 // Combien de petits blocs (plus petit que maxTaillePetit) non alloués y a-t-il présentement en mémoire?
-extern int mem_small_free();
+extern int mem_small_free(int maxTaillePetit);
 
 // Est-ce qu’un octet (byte) particulier est alloué
 extern int mem_est_alloue(int pByte);
