@@ -272,12 +272,15 @@ int alloumem(int size){
     switch(STRATEGY) {
     case first_fit:
 	free_bloc = find_first_allocation_fit(size);
+	break;
 
     case best_fit:
 	free_bloc = find_best_allocation_fit(size);
+	break;
 
     case worst_fit:
 	free_bloc = find_worst_allocation_fit(size);
+	break;
 
     default: 
 	printf("ERROR, unknown strategy\n");
