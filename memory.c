@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 /*
   Compile library: 
@@ -43,7 +44,7 @@ bloc * split_bloc(bloc *original_bloc, int new_bloc_size){
     // Create new bloc
     new_bloc->is_free = 0;
     new_bloc->size = new_bloc_size;
-    /* new_bloc->start = original_bloc->start; */
+    new_bloc->start = original_bloc->start;
     memcpy(&new_bloc->virtual_start, &original_bloc->virtual_start, sizeof(int));
     new_bloc->previous = original_bloc->previous; 
     new_bloc->next = original_bloc;
@@ -55,7 +56,7 @@ bloc * split_bloc(bloc *original_bloc, int new_bloc_size){
 
     // Adjust the original bloc
     // FIXME If original_bloc size become 0, delete the bloc
-    /* original_bloc.start = new_bloc.start + ? */
+    original_bloc->start = new_bloc->start + new_bloc->size;
     original_bloc->virtual_start = new_bloc->virtual_start + new_bloc->size;
     original_bloc->size = original_bloc->size - new_bloc->size;
     original_bloc->previous = new_bloc;
@@ -87,7 +88,7 @@ int * initmem(int size, enum strategy strategy) {
     FIRST_BLOC->is_free = 1;
     FIRST_BLOC->next = NULL;
     FIRST_BLOC->previous = NULL;
-    /* FIRST_BLOC->start = (int) ptr; */ // TODO adjust start when spliting & merging bloc
+    FIRST_BLOC->start = (intptr_t) ptr;// TODO adjust start when spliting & merging bloc
     FIRST_BLOC->virtual_start = 0;
     FIRST_BLOC->size = size;
 
@@ -171,7 +172,7 @@ int alloumem(int size){
     bloc * new_bloc = NULL;
 
     switch(STRATEGY) {
-    case first_fit  :
+    case first_fit:
 	free_bloc = find_first_allocation_fit(size);
 	if(free_bloc == NULL){
 	    return -1;
@@ -183,7 +184,7 @@ int alloumem(int size){
 	printf("ERROR, unknown strategy\n");
 	return -1;
     }
-    return new_bloc->virtual_start;  // TODO return the memory address
+    return new_bloc->start;
 }
 
 
@@ -205,6 +206,3 @@ bloc * find_first_allocation_fit(int size){
     }
     return NULL;
 }
-
-
-
