@@ -202,13 +202,13 @@ int mem_small_free(int maxTaillePetit){
     bloc *current_bloc = FIRST_BLOC;
     
     while(current_bloc->next != NULL){
-	if (current_bloc->size < maxTaillePetit){
+	if (current_bloc->size < maxTaillePetit && current_bloc->is_free){
 	    counter_small_bloc++;
 	}
 	current_bloc = current_bloc->next;
     }
 
-    if (current_bloc->size < maxTaillePetit){
+    if (current_bloc->size < maxTaillePetit && current_bloc->is_free){
 	counter_small_bloc ++;
     }
     return counter_small_bloc;
