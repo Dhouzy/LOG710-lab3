@@ -381,12 +381,8 @@ bloc * find_next_allocation_fit(int size){
 	return current_bloc;
     }
     
-    
     current_bloc = LAST_BLOC_FIT->next;
 
-    if (size == 45){
-    	printf("current bloc size %d", current_bloc->size);
-    }
     if (current_bloc == NULL){
 	current_bloc = FIRST_BLOC;
     }
