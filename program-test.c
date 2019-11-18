@@ -42,12 +42,42 @@ void test_best_allocation(){
     	printf("good \n");
     }
 }
+void test_next_allocation(){
+    initmem(1000, next_fit);
 
+    int start0 = alloumem(100);
+    alloumem(95);
+    alloumem(5);
+    alloumem(100);
+    int start1 = alloumem(200);
+    alloumem(200);
+    int start2 = alloumem(200);
+    int start3 = alloumem(100);
+
+
+    libermem(start0);
+    libermem(start2);
+
+    int new_start0 = alloumem(50);
+
+    if (new_start0 == start0){
+    	printf("good1\n");
+    }
+
+    libermem(new_start0);
+    int new_start1 = alloumem(45); // HERE the last bloc fit is merged. Should we still point on the merged one or the next?
+
+    if (new_start1 == start0){
+    	printf("good2\n");
+    }
+    
+}
 int main(){
 
-    test_best_allocation();
+    /* test_best_allocation(); */
+    test_next_allocation();
 
-    /* int *ptr = initmem(1000, first_fit); // FIXME address = 0? */
+    /* int *ptr = initmem(1000, first_fit); // FIXME ptr = 0? */
 
     /* int start1 = alloumem(750); */
     /* int start2 = alloumem(50); */
@@ -70,7 +100,7 @@ int main(){
     int biggest_free_bloc = mem_pgrand_libre();
     printf("Plus grans bloc libre est de: %d \n", biggest_free_bloc);
 
-    int counter_small_bloc = mem_small_free(51);
-    printf("Nombre de bloc libre plus petit que 51: %d \n", counter_small_bloc);
+    int counter_small_bloc = mem_small_free(50);
+    printf("Nombre de bloc libre plus petit que 50: %d \n", counter_small_bloc);
 
 }

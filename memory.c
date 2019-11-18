@@ -26,12 +26,14 @@ enum strategy STRATEGY = -1;
 int MEMORY_SIZE = -1;
 
 bloc *FIRST_BLOC = NULL; 
+bloc* LAST_BLOC_FIT = NULL;
 
 /* FUNCTION DECLARATION */
 
 bloc * find_first_allocation_fit(int size);
 bloc * find_best_allocation_fit(int size);
 bloc * find_worst_allocation_fit(int size);
+bloc * find_next_allocation_fit(int size);
 
 
 /* INTERNAL DATA STUCTURE */
@@ -282,15 +284,25 @@ int alloumem(int size){
 	free_bloc = find_worst_allocation_fit(size);
 	break;
 
+    case next_fit:
+	free_bloc = find_next_allocation_fit(size);
+	break;
+
     default: 
 	printf("ERROR, unknown strategy\n");
 	return -1;
     }
 
     if(free_bloc == NULL){
+	printf("No bloc free bloc can fit this size: %d\n", size);
 	return -1;
     }
     new_bloc = split_bloc(free_bloc, size);
+
+    if(STRATEGY == next_fit){
+	LAST_BLOC_FIT = new_bloc;
+    }
+
     return new_bloc->start;
 }
 
@@ -358,8 +370,36 @@ bloc * find_worst_allocation_fit(int size) {
 	current_best_bloc = current_bloc;
 	additionnal_size = current_bloc->size - size;
     }
-    /* printf("current_best_bloc size: %d\n", current_best_bloc->size); */
-
     return current_best_bloc;
+}
+
+bloc * find_next_allocation_fit(int size){
+    bloc* current_bloc = NULL;
+
+    if(LAST_BLOC_FIT == NULL){
+	current_bloc = find_first_allocation_fit(size);
+	return current_bloc;
+    }
     
+    
+    current_bloc = LAST_BLOC_FIT->next;
+
+    if (size == 45){
+    	printf("current bloc size %d", current_bloc->size);
+    }
+    if (current_bloc == NULL){
+	current_bloc = FIRST_BLOC;
+    }
+
+    while (current_bloc != LAST_BLOC_FIT) {
+	if (current_bloc->is_free && current_bloc->size >= size){
+	    return current_bloc;
+	}
+
+	current_bloc = current_bloc->next;
+	if (current_bloc == NULL){
+	    current_bloc = FIRST_BLOC;
+	}
+    }
+    return NULL;
 }
