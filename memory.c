@@ -82,7 +82,7 @@ bloc * split_bloc(bloc *original_bloc, int new_bloc_size){
 }
 
 int merge_bloc(bloc * bloc1, bloc * bloc2){
-    //  bloc1 should be before bloc 2 (address wise)
+    // bloc1 should be before bloc 2 (address wise)
     bloc* second_bloc;
     bloc* first_bloc;
     if(bloc1->start < bloc2->start){
@@ -93,7 +93,7 @@ int merge_bloc(bloc * bloc1, bloc * bloc2){
 	second_bloc = bloc1;
     }
 
-    //Verify both bloc are adjacent.
+    // Verify both bloc are adjacent.
     if (first_bloc->start + first_bloc->size != second_bloc->start) {
 	return -1;
     }
@@ -294,7 +294,7 @@ int alloumem(int size){
     }
 
     if(free_bloc == NULL){
-	printf("No bloc free bloc can fit this size: %d\n", size);
+	printf("Aucune place pour un bloc de cette taille: %d\n", size);
 	return -1;
     }
     new_bloc = split_bloc(free_bloc, size);

@@ -9,6 +9,8 @@
 */
 
 void print_stats();
+int read_integer_input();
+int read_hex_input();
 
 void test_best_allocation(){
     initmem(1000, best_fit);
@@ -77,9 +79,13 @@ int main(){
     /* test_best_allocation(); */
     /* test_next_allocation(); */
 
-    /* int *ptr = initmem(1000, first_fit); // FIXME ptr = 0? */
-
+    /* int *ptr1 = initmem(1000, first_fit); */
+    /* sleep(1); */
     /* int start1 = alloumem(750); */
+    /* int res = 3; */
+    /* res = mem_est_alloue(start1+751); */
+    /* printf("%d\n", res); */
+
     /* int start2 = alloumem(50); */
     /* int start3 = alloumem(150); */
 
@@ -87,7 +93,8 @@ int main(){
     /* libermem(start2); */
     /* libermem(start3); */
 
-    int strategy_type = -1;
+    
+    /* return 0; */
 
     printf("Choisisez la stratégie.\n");
     printf("1. First Fit\n");
@@ -95,7 +102,9 @@ int main(){
     printf("3. Worst Fit\n");
     printf("4. Next Fit\n");
     printf("Entrez un chiffre de 1 à 4: ");
-    scanf("%d", &strategy_type);
+
+    int strategy_type = -1;
+    strategy_type = read_integer_input();
 
     if(strategy_type < 1 || strategy_type > 4){
 	printf("Ooops veuilez choisir une valeur entre 1 et 4 \n");
@@ -104,7 +113,7 @@ int main(){
 
     int memory_size = -1;
     printf("Entrez la taille de la mémoire à allouer entre 100 et 10000 (un chiffre entier) :");
-    scanf("%d", &memory_size);
+    memory_size = read_integer_input();
     if (memory_size < 100 || memory_size > 10000){
 	printf("Valeur de la taille de la mémoire invalide\n");
 	return -1;
@@ -130,17 +139,17 @@ int main(){
 	printf("3. Vérifier si un octet est alloué\n");
 	printf("4. Afficher les statistiques\n");
 	printf("5. Quitter\n");
-	scanf("%d", &user_action);
+	user_action = read_integer_input();
 
 	if(user_action == 1){
 	    int bloc_size = -1;
 	    printf("Taille du bloc à allouer: "); 
-	    scanf("%d", &bloc_size);
+	    bloc_size = read_integer_input();
 	    if(bloc_size != -1){
 		int start_bloc = alloumem(bloc_size);
 		if(start_bloc != -1){
 		    printf("Bloc créer avec succes\n");
-		    printf("> Addresse mémoire du bloc: %X", start_bloc);
+		    printf("> Addresse mémoire du bloc: %X\n", start_bloc);
 		}
 	    }else {
 		printf("Valeur incorect\n");
@@ -150,7 +159,7 @@ int main(){
 	} else if(user_action == 2){
 	    int input_address = -1;
 	    printf("Addresse mémoire du bloc à libéré:\n");
-	    scanf("%d", &input_address);
+	    input_address = read_hex_input();
 	    if(input_address != -1){
 		int res = libermem(input_address);
 		if(res == -1){
@@ -163,10 +172,10 @@ int main(){
 	    }
 	} else if(user_action == 3){
 	    int input_address = -1;
-	    printf("Entrez une adresse mémoire (Première adresse de la zone mémoire étant: %X): ", &ptr);
-	    scanf("%d", &input_address);
+	    /* printf("Entrez une adresse mémoire (Première adresse de la zone mémoire étant: %X): ", &ptr); */
+	    input_address = read_hex_input();
 	    if(input_address != -1){
-		int res = libermem(input_address);
+		int res = mem_est_alloue(input_address);
 		if(res == 1){
 		    printf("Bloc mémoire est alloué.\n");
 		}else{
@@ -183,7 +192,28 @@ int main(){
     }
 }
 
+int read_integer_input(){
+
+    int value = -1;
+    char line[100];
+    fgets(line, sizeof(line), stdin);
+    sscanf (line, "%d", &value); 
+
+    return value;
+}
+
+int read_hex_input(){
+    int value = -1;
+    char line[100];
+    fgets(line, sizeof(line), stdin);
+    sscanf (line, "%X", &value);
+
+    return value;
+}
+
+
 void print_stats(){
+    system("@cls||clear");
     int number_allocated_bloc = nblocalloues();
     printf("Nombre de bloc alloue: %d \n", number_allocated_bloc);
 
@@ -197,5 +227,5 @@ void print_stats(){
     printf("Plus grans bloc libre est de: %d \n", biggest_free_bloc);
 
     int counter_small_bloc = mem_small_free(50);
-    printf("Nombre de bloc libre plus petit que 50: %d \n", counter_small_bloc);
+    printf("Nombre de bloc libre plus petit que 50: %d \n\n\n\n", counter_small_bloc);
 }
