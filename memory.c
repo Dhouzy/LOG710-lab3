@@ -26,7 +26,7 @@ enum strategy STRATEGY = -1;
 int MEMORY_SIZE = -1;
 
 bloc *FIRST_BLOC = NULL; 
-bloc* LAST_BLOC_FIT = NULL;
+bloc *LAST_BLOC_FIT = NULL;
 
 /* FUNCTION DECLARATION */
 
@@ -96,6 +96,10 @@ int merge_bloc(bloc * bloc1, bloc * bloc2){
     // Verify both bloc are adjacent.
     if (first_bloc->start + first_bloc->size != second_bloc->start) {
 	return -1;
+    }
+
+    if(&LAST_BLOC_FIT == &second_bloc){
+	LAST_BLOC_FIT = first_bloc;
     }
 
     // Merge
@@ -385,7 +389,7 @@ bloc * find_next_allocation_fit(int size){
     if (current_bloc == NULL){
 	current_bloc = FIRST_BLOC;
     }
-
+    int cmpt = 0;
     while (current_bloc != LAST_BLOC_FIT) {
 	if (current_bloc->is_free && current_bloc->size >= size){
 	    return current_bloc;
@@ -394,6 +398,10 @@ bloc * find_next_allocation_fit(int size){
 	current_bloc = current_bloc->next;
 	if (current_bloc == NULL){
 	    current_bloc = FIRST_BLOC;
+	    cmpt++;
+	    if(cmpt > 2){
+		return NULL;
+	    }
 	}
     }
     return NULL;
