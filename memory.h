@@ -7,7 +7,7 @@ enum strategy{first_fit, best_fit, worst_fit, next_fit};
 
 
 // Return success or error
-extern int * initmem(int size, enum strategy strategy);
+extern int initmem(int size, enum strategy strategy);
 
 // Return start location of the block (pBloc)
 extern int alloumem(int size);

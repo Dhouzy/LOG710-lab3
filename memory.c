@@ -144,7 +144,7 @@ int free_bloc(bloc* bloc_to_free){
 
 /* PUBLIC FUNCTION */
 
-int * initmem(int size, enum strategy strategy) {
+int initmem(int size, enum strategy strategy) {
     FIRST_BLOC = (bloc*) calloc(1, sizeof(*FIRST_BLOC));
     int *ptr = (int *)&FIRST_BLOC;
 
@@ -159,7 +159,7 @@ int * initmem(int size, enum strategy strategy) {
     FIRST_BLOC->virtual_start = 0;
     FIRST_BLOC->size = size;
 
-    return ptr;
+    return FIRST_BLOC->start;
 }
 
 int nblocalloues(){

@@ -120,7 +120,7 @@ int main(){
 	return -1;
     }
 
-    int *ptr = NULL; 
+    int ptr = -1; 
     if(strategy_type == 1){
 	ptr = initmem(memory_size, first_fit);
     }else if(strategy_type == 2){
@@ -173,7 +173,7 @@ int main(){
 	    }
 	} else if(user_action == 3){
 	    int input_address = -1;
-	    printf("Entrez une adresse mémoire (Première adresse de la zone mémoire étant: %X): ", &ptr);
+	    printf("Entrez une adresse mémoire (Première adresse de la zone mémoire étant: %X): ", ptr);
 	    input_address = read_hex_input();
 	    if(input_address != -1){
 		int res = mem_est_alloue(input_address);
@@ -211,7 +211,6 @@ int read_hex_input(){
 
     return value;
 }
-
 
 void print_stats(){
     system("@cls||clear");
