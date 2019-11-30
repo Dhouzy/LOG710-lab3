@@ -1,6 +1,7 @@
 #include "memory.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 
 /*
   Compile program
@@ -8,9 +9,32 @@
   TODO make simple MAKEFILE
 */
 
+int RAND_MIN_NUMBER = 50;
+int RAND_MAX_NUMBER = 300;
+
+typedef struct Stats {
+    char *strategy_name;
+    int number_allocated_bloc;
+    int number_free_bloc;
+    int free_memory;
+    int biggest_free_bloc;
+    int counter_small_bloc;
+}stats;
+
+typedef struct InfoBloc {
+    int is_bloc_freed;
+    int address;
+}infoBloc;
+
 void print_stats();
 int read_integer_input();
 int read_hex_input();
+int get_rand_value();
+void run_strategies();
+int get_first_used_bloc(infoBloc arrBloc[]);
+void print_collected_stats(stats stat);
+void run_operations(int *operations, infoBloc *arrBloc);
+void collect_stat(stats *stat);
 
 void test_best_allocation(){
     initmem(1000, best_fit);
@@ -102,14 +126,19 @@ int main(){
     printf("2. Best Fit\n");
     printf("3. Worst Fit\n");
     printf("4. Next Fit\n");
-    printf("Entrez un chiffre de 1 à 4: ");
+    printf("5. Comparaison des stratégies");
+    printf("Entrez un chiffre de 1 à 5: ");
 
     int strategy_type = -1;
     strategy_type = read_integer_input();
 
-    if(strategy_type < 1 || strategy_type > 4){
+    if(strategy_type < 1 || strategy_type > 5){
 	printf("Ooops veuilez choisir une valeur entre 1 et 4 \n");
 	return -1;
+    }
+    if (strategy_type == 5){
+	run_strategies();
+	return 0;
     }
 
     int memory_size = -1;
@@ -228,4 +257,142 @@ void print_stats(){
 
     int counter_small_bloc = mem_small_free(50);
     printf("Nombre de bloc libre plus petit que 50: %d \n\n\n\n", counter_small_bloc);
+}
+
+
+
+
+
+
+void run_strategies(){
+    srand(time(NULL));
+
+// Generate sequence
+// if -1 free a bloc 
+    int operations[100], n;
+
+    for(n=0; n<100; n++) {
+	operations[n] = get_rand_value();
+	printf("value at cell %d is %d \n", n, operations[n]);
+    }   
+
+    stats stat[4];
+    stat[0].strategy_name = "First Fit";
+    stat[1].strategy_name = "Best Fit";
+    stat[2].strategy_name = "Worst Fit";
+    stat[3].strategy_name = "Next Fit";
+    
+    infoBloc arrBloc[100];
+    for(int l=0; l<100; l++){ arrBloc[l].address = -1; arrBloc[l].is_bloc_freed = 0;}
+
+
+    initmem(1000, first_fit);
+    run_operations(operations, arrBloc);
+    collect_stat(&stat[0]);
+
+    initmem(1000, best_fit);
+    run_operations(operations, arrBloc);
+    collect_stat(&stat[1]);
+
+    initmem(1000, worst_fit);
+    run_operations(operations, arrBloc);
+    collect_stat(&stat[2]);
+
+    /* initmem(1000, next_fit); */
+    /* run_operations(operations, arrBloc); */
+    /* collect_stat(&stat[3]); */
+
+    /* int temp_address = -1; */
+    /* // Run operations */
+    /* for(int i=0; i<100; i++){ */
+    /* 	if (operations[i] == -1){ */
+    /* 	    int bloc_index = get_first_used_bloc(arrBloc); */
+    /* 	    arrBloc[bloc_index].is_bloc_freed = 1; */
+    /* 	    libermem(arrBloc[bloc_index].address); */
+    /* 	} else { */
+    /* 	    temp_address = alloumem(operations[i]); */
+    /* 	} */
+    /* 	arrBloc[i].address = temp_address; */
+    /* 	arrBloc[i].is_bloc_freed = 0; */
+    /* 	temp_address = -1; */
+    /* } */
+
+    // Collect stats
+    /* stat[0].biggest_free_bloc = mem_pgrand_libre(); */
+    /* stat[0].counter_small_bloc = mem_small_free(50); */
+    /* stat[0].free_memory = memlibre(); */
+    /* stat[0].number_allocated_bloc = nblocalloues(); */
+    /* stat[0].number_free_bloc = nbloclibres(); */
+
+
+    //Print collected stats
+    for(int i=0; i<4; i++){
+	print_collected_stats(stat[i]);
+    }
+}
+
+void collect_stat(stats *stat){
+    stat->biggest_free_bloc = mem_pgrand_libre();
+    stat->counter_small_bloc = mem_small_free(50);
+    stat->free_memory = memlibre();
+    stat->number_allocated_bloc = nblocalloues();
+    stat->number_free_bloc = nbloclibres();
+}
+
+void run_operations(int *operations, infoBloc *arrBloc){
+    for(int l=0; l<100; l++){ arrBloc[l].address = -1; arrBloc[l].is_bloc_freed = 0;}
+
+    int temp_address = -1;
+    // Run operations
+    for(int i=0; i<100; i++){
+	if (operations[i] == -1){
+	    int bloc_index = get_first_used_bloc(arrBloc);
+	    arrBloc[bloc_index].is_bloc_freed = 1;
+	    libermem(arrBloc[bloc_index].address);
+	} else {
+	    temp_address = alloumem(operations[i]);
+	}
+	arrBloc[i].address = temp_address;
+	arrBloc[i].is_bloc_freed = 0;
+	temp_address = -1;
+    }
+    
+}
+
+
+void print_collected_stats(stats stat){
+    printf("=====================================================================\n");
+    printf("STRATÉGIE: %s\n", stat.strategy_name);
+
+    printf("Nombre de bloc alloue: %d \n", stat.number_allocated_bloc);
+
+    printf("Nombre de bloc libre: %d \n", stat.number_free_bloc);
+
+    printf("Memore libre: %d \n", stat.free_memory);
+
+    printf("Plus grans bloc libre est de: %d \n", stat.biggest_free_bloc);
+
+    printf("Nombre de bloc libre plus petit que 50: %d\n", stat.counter_small_bloc);
+    printf("=====================================================================\n\n\n");
+}
+
+int get_first_used_bloc(infoBloc arrBloc[]){
+    for(int i=0; i<100; i++){
+	if (arrBloc[i].is_bloc_freed == 0 && arrBloc[i].address != -1){
+	    arrBloc[i].is_bloc_freed == 1;
+	    return i;
+	}
+    }
+    return -1;
+}
+
+int get_rand_value(){
+
+    int r = rand() % 5 ;
+    if(r == 0){
+	return -1;
+    }
+    r = (rand() % 
+	 (RAND_MAX_NUMBER - RAND_MIN_NUMBER + 1)) + RAND_MIN_NUMBER; 
+    return r;
 }
