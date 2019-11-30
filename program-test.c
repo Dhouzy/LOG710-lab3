@@ -36,90 +36,7 @@ void print_collected_stats(stats stat);
 void run_operations(int *operations, infoBloc *arrBloc);
 void collect_stat(stats *stat);
 
-void test_best_allocation(){
-    initmem(1000, best_fit);
-
-    alloumem(300);
-    int start1 = alloumem(200);
-    alloumem(200);
-    alloumem(200);
-    int start2 =  alloumem(100);
-
-    printf("start2: %X\n", start2);
-    libermem(start1);
-    libermem(start2);
-
-    if(mem_est_alloue(start1 +1) == -1){
-	printf("ok \n");
-    }
-
-    if(mem_est_alloue(start2 +1) == -1){
-	printf("ok \n");
-    }
-
-    int start3 = alloumem(50);
-
-    if(start2 == start3){
-	printf("start2 = start3 good \n");
-    }
-
-    // one more test
-    if(mem_est_alloue(start2+1) == 1){
-	printf("good \n");
-    }
-}
-void test_next_allocation(){
-    initmem(1000, next_fit);
-
-    int start0 = alloumem(100);
-    alloumem(95);
-    alloumem(5);
-    alloumem(100);
-    int start1 = alloumem(200);
-    alloumem(200);
-    int start2 = alloumem(200);
-    int start3 = alloumem(100);
-
-
-    libermem(start0);
-    libermem(start2);
-
-    int new_start0 = alloumem(50);
-
-    if (new_start0 == start0){
-	printf("good1\n");
-    }
-
-    libermem(new_start0);
-    int new_start1 = alloumem(45); // FIXME  we should point on the merged one --HERE the last bloc fit is merged. Should we still point on the merged one or the next?
-
-    if (new_start1 == start0){
-	printf("good2\n");
-    }
-    
-}
 int main(){
-
-    /* test_best_allocation(); */
-    /* test_next_allocation(); */
-
-    /* int *ptr1 = initmem(1000, first_fit); */
-
-    /* sleep(1); */
-    /* int start1 = alloumem(750); */
-    /* int res = 3; */
-    /* res = mem_est_alloue(start1+751); */
-    /* printf("%d\n", res); */
-
-    /* int start2 = alloumem(50); */
-    /* int start3 = alloumem(150); */
-
-    
-    /* libermem(start2); */
-    /* libermem(start3); */
-
-    
-    /* return 0; */
 
     printf("Choisisez la stratégie.\n");
     printf("1. First Fit\n");
@@ -287,17 +204,21 @@ void run_strategies(){
 
 
     // Run operation
-    initmem(1000, first_fit);
-    run_operations(operations, arrBloc);
-    collect_stat(&stat[0]);
+    /* initmem(1000, first_fit); */
+    /* run_operations(operations, arrBloc); */
+    /* collect_stat(&stat[0]); */
 
-    initmem(1000, best_fit);
-    run_operations(operations, arrBloc);
-    collect_stat(&stat[1]);
+    /* initmem(1000, best_fit); */
+    /* run_operations(operations, arrBloc); */
+    /* collect_stat(&stat[1]); */
 
-    initmem(1000, worst_fit);
+    /* initmem(1000, worst_fit); */
+    /* run_operations(operations, arrBloc); */
+    /* collect_stat(&stat[2]); */
+
+    initmem(1000, next_fit);
     run_operations(operations, arrBloc);
-    collect_stat(&stat[2]);
+    collect_stat(&stat[3]);
 
     //Print collected stats
     for(int i=0; i<4; i++){
@@ -320,9 +241,11 @@ void run_operations(int *operations, infoBloc *arrBloc){
     for(int i=0; i<100; i++){
 	if (operations[i] == -1){
 	    int bloc_index = get_first_used_bloc(arrBloc);
+	    printf("freeing\n");
 	    arrBloc[bloc_index].is_bloc_freed = 1;
 	    libermem(arrBloc[bloc_index].address);
 	} else {
+	    printf("alloue %d\n", operations[i]);
 	    temp_address = alloumem(operations[i]);
 	}
 	arrBloc[i].address = temp_address;
@@ -359,7 +282,6 @@ int get_first_used_bloc(infoBloc arrBloc[]){
 }
 
 int get_rand_value(){
-
     int r = rand() % 5 ;
     if(r == 0){
 	return -1;
