@@ -8,7 +8,7 @@
   TODO make simple MAKEFILE
 */
 
-
+void print_stats();
 
 void test_best_allocation(){
     initmem(1000, best_fit);
@@ -34,12 +34,12 @@ void test_best_allocation(){
     int start3 = alloumem(50);
 
     if(start2 == start3){
-    	printf("start2 = start3 good \n");
+	printf("start2 = start3 good \n");
     }
 
     // one more test
     if(mem_est_alloue(start2+1) == 1){
-    	printf("good \n");
+	printf("good \n");
     }
 }
 void test_next_allocation(){
@@ -61,21 +61,21 @@ void test_next_allocation(){
     int new_start0 = alloumem(50);
 
     if (new_start0 == start0){
-    	printf("good1\n");
+	printf("good1\n");
     }
 
     libermem(new_start0);
-    int new_start1 = alloumem(45); // HERE the last bloc fit is merged. Should we still point on the merged one or the next?
+    int new_start1 = alloumem(45); // FIXME  we should point on the merged one --HERE the last bloc fit is merged. Should we still point on the merged one or the next?
 
     if (new_start1 == start0){
-    	printf("good2\n");
+	printf("good2\n");
     }
     
 }
 int main(){
 
     /* test_best_allocation(); */
-    test_next_allocation();
+    /* test_next_allocation(); */
 
     /* int *ptr = initmem(1000, first_fit); // FIXME ptr = 0? */
 
@@ -87,11 +87,107 @@ int main(){
     /* libermem(start2); */
     /* libermem(start3); */
 
+    int strategy_type = -1;
 
+    printf("Choisisez la stratégie.\n");
+    printf("1. First Fit\n");
+    printf("2. Best Fit\n");
+    printf("3. Worst Fit\n");
+    printf("4. Next Fit\n");
+    printf("Entrez un chiffre de 1 à 4: ");
+    scanf("%d", &strategy_type);
+
+    if(strategy_type < 1 || strategy_type > 4){
+	printf("Ooops veuilez choisir une valeur entre 1 et 4 \n");
+	return -1;
+    }
+
+    int memory_size = -1;
+    printf("Entrez la taille de la mémoire à allouer entre 100 et 10000 (un chiffre entier) :");
+    scanf("%d", &memory_size);
+    if (memory_size < 100 || memory_size > 10000){
+	printf("Valeur de la taille de la mémoire invalide\n");
+	return -1;
+    }
+
+    int *ptr = NULL; 
+    if(strategy_type == 1){
+	ptr = initmem(memory_size, first_fit);
+    }else if(strategy_type == 2){
+	ptr = initmem(memory_size, best_fit);
+    }else if(strategy_type == 3){
+	ptr = initmem(memory_size, worst_fit);
+    }else if(strategy_type == 4){
+	ptr = initmem(memory_size, next_fit);
+    }
+
+
+    int user_action = -1;
+    while(user_action != 5){
+	user_action = -1;
+	printf("1. Alouer un bloc mémoire\n");
+	printf("2. Suprimer un bloc\n");
+	printf("3. Vérifier si un octet est alloué\n");
+	printf("4. Afficher les statistiques\n");
+	printf("5. Quitter\n");
+	scanf("%d", &user_action);
+
+	if(user_action == 1){
+	    int bloc_size = -1;
+	    printf("Taille du bloc à allouer: "); 
+	    scanf("%d", &bloc_size);
+	    if(bloc_size != -1){
+		int start_bloc = alloumem(bloc_size);
+		if(start_bloc != -1){
+		    printf("Bloc créer avec succes\n");
+		    printf("> Addresse mémoire du bloc: %X", start_bloc);
+		}
+	    }else {
+		printf("Valeur incorect\n");
+		continue;
+	    }
+	    
+	} else if(user_action == 2){
+	    int input_address = -1;
+	    printf("Addresse mémoire du bloc à libéré:\n");
+	    scanf("%d", &input_address);
+	    if(input_address != -1){
+		int res = libermem(input_address);
+		if(res == -1){
+		    printf("Aucun bloc à libérer à cette adresse\n"); 
+		}else{
+		    printf("Bloc libéré avec succès\n");
+		}
+	    }else{
+		printf("Valeur incorect\n");
+	    }
+	} else if(user_action == 3){
+	    int input_address = -1;
+	    printf("Entrez une adresse mémoire (Première adresse de la zone mémoire étant: %X): ", &ptr);
+	    scanf("%d", &input_address);
+	    if(input_address != -1){
+		int res = libermem(input_address);
+		if(res == 1){
+		    printf("Bloc mémoire est alloué.\n");
+		}else{
+		    printf("Bloc mémoire n'est pas alloué.\n");
+		}
+	    }else{
+		printf("Valeur incorect\n");
+	    }
+	    
+
+	} else if(user_action == 4){
+	    print_stats();    
+	}
+    }
+}
+
+void print_stats(){
     int number_allocated_bloc = nblocalloues();
     printf("Nombre de bloc alloue: %d \n", number_allocated_bloc);
 
-   int number_free_bloc = nbloclibres();
+    int number_free_bloc = nbloclibres();
     printf("Nombre de bloc libre: %d \n", number_free_bloc);
 
     int free_memory = memlibre();
@@ -102,5 +198,4 @@ int main(){
 
     int counter_small_bloc = mem_small_free(50);
     printf("Nombre de bloc libre plus petit que 50: %d \n", counter_small_bloc);
-
 }
