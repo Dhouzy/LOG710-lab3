@@ -286,6 +286,7 @@ void run_strategies(){
     for(int l=0; l<100; l++){ arrBloc[l].address = -1; arrBloc[l].is_bloc_freed = 0;}
 
 
+    // Run operation
     initmem(1000, first_fit);
     run_operations(operations, arrBloc);
     collect_stat(&stat[0]);
@@ -297,33 +298,6 @@ void run_strategies(){
     initmem(1000, worst_fit);
     run_operations(operations, arrBloc);
     collect_stat(&stat[2]);
-
-    /* initmem(1000, next_fit); */
-    /* run_operations(operations, arrBloc); */
-    /* collect_stat(&stat[3]); */
-
-    /* int temp_address = -1; */
-    /* // Run operations */
-    /* for(int i=0; i<100; i++){ */
-    /* 	if (operations[i] == -1){ */
-    /* 	    int bloc_index = get_first_used_bloc(arrBloc); */
-    /* 	    arrBloc[bloc_index].is_bloc_freed = 1; */
-    /* 	    libermem(arrBloc[bloc_index].address); */
-    /* 	} else { */
-    /* 	    temp_address = alloumem(operations[i]); */
-    /* 	} */
-    /* 	arrBloc[i].address = temp_address; */
-    /* 	arrBloc[i].is_bloc_freed = 0; */
-    /* 	temp_address = -1; */
-    /* } */
-
-    // Collect stats
-    /* stat[0].biggest_free_bloc = mem_pgrand_libre(); */
-    /* stat[0].counter_small_bloc = mem_small_free(50); */
-    /* stat[0].free_memory = memlibre(); */
-    /* stat[0].number_allocated_bloc = nblocalloues(); */
-    /* stat[0].number_free_bloc = nbloclibres(); */
-
 
     //Print collected stats
     for(int i=0; i<4; i++){
@@ -343,7 +317,6 @@ void run_operations(int *operations, infoBloc *arrBloc){
     for(int l=0; l<100; l++){ arrBloc[l].address = -1; arrBloc[l].is_bloc_freed = 0;}
 
     int temp_address = -1;
-    // Run operations
     for(int i=0; i<100; i++){
 	if (operations[i] == -1){
 	    int bloc_index = get_first_used_bloc(arrBloc);
@@ -356,7 +329,6 @@ void run_operations(int *operations, infoBloc *arrBloc){
 	arrBloc[i].is_bloc_freed = 0;
 	temp_address = -1;
     }
-    
 }
 
 
