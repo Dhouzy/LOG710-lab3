@@ -80,6 +80,7 @@ int main(){
     /* test_next_allocation(); */
 
     /* int *ptr1 = initmem(1000, first_fit); */
+
     /* sleep(1); */
     /* int start1 = alloumem(750); */
     /* int res = 3; */
@@ -172,7 +173,7 @@ int main(){
 	    }
 	} else if(user_action == 3){
 	    int input_address = -1;
-	    /* printf("Entrez une adresse mémoire (Première adresse de la zone mémoire étant: %X): ", &ptr); */
+	    printf("Entrez une adresse mémoire (Première adresse de la zone mémoire étant: %X): ", &ptr);
 	    input_address = read_hex_input();
 	    if(input_address != -1){
 		int res = mem_est_alloue(input_address);

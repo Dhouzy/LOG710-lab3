@@ -145,9 +145,8 @@ int free_bloc(bloc* bloc_to_free){
 /* PUBLIC FUNCTION */
 
 int * initmem(int size, enum strategy strategy) {
-    int *ptr =  (int*) malloc(size);
-
     FIRST_BLOC = (bloc*) calloc(1, sizeof(*FIRST_BLOC));
+    int *ptr = (int *)&FIRST_BLOC;
 
     STRATEGY = strategy;
     MEMORY_SIZE = size;
