@@ -159,7 +159,6 @@ int read_hex_input(){
 }
 
 void print_stats(){
-    system("@cls||clear");
     int number_allocated_bloc = nblocalloues();
     printf("Nombre de bloc alloue: %d \n", number_allocated_bloc);
 
@@ -177,10 +176,6 @@ void print_stats(){
 }
 
 
-
-
-
-
 void run_strategies(){
     srand(time(NULL));
 
@@ -190,7 +185,7 @@ void run_strategies(){
 
     for(n=0; n<100; n++) {
 	operations[n] = get_rand_value();
-	printf("value at cell %d is %d \n", n, operations[n]);
+	/* printf("value at cell %d is %d \n", n, operations[n]); */
     }   
 
     stats stat[4];
@@ -202,19 +197,18 @@ void run_strategies(){
     infoBloc arrBloc[100];
     for(int l=0; l<100; l++){ arrBloc[l].address = -1; arrBloc[l].is_bloc_freed = 0;}
 
-
     // Run operation
-    /* initmem(1000, first_fit); */
-    /* run_operations(operations, arrBloc); */
-    /* collect_stat(&stat[0]); */
+    initmem(1000, first_fit);
+    run_operations(operations, arrBloc);
+    collect_stat(&stat[0]);
 
-    /* initmem(1000, best_fit); */
-    /* run_operations(operations, arrBloc); */
-    /* collect_stat(&stat[1]); */
+    initmem(1000, best_fit);
+    run_operations(operations, arrBloc);
+    collect_stat(&stat[1]);
 
-    /* initmem(1000, worst_fit); */
-    /* run_operations(operations, arrBloc); */
-    /* collect_stat(&stat[2]); */
+    initmem(1000, worst_fit);
+    run_operations(operations, arrBloc);
+    collect_stat(&stat[2]);
 
     initmem(1000, next_fit);
     run_operations(operations, arrBloc);
@@ -239,13 +233,12 @@ void run_operations(int *operations, infoBloc *arrBloc){
 
     int temp_address = -1;
     for(int i=0; i<100; i++){
+	/* printf("alloue %d\n", operations[i]); */
 	if (operations[i] == -1){
 	    int bloc_index = get_first_used_bloc(arrBloc);
-	    printf("freeing\n");
 	    arrBloc[bloc_index].is_bloc_freed = 1;
 	    libermem(arrBloc[bloc_index].address);
 	} else {
-	    printf("alloue %d\n", operations[i]);
 	    temp_address = alloumem(operations[i]);
 	}
 	arrBloc[i].address = temp_address;

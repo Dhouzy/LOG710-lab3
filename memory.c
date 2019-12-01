@@ -81,7 +81,7 @@ bloc * split_bloc(bloc *original_bloc, int new_bloc_size){
     return new_bloc;
 }
 
-int merge_bloc(bloc * bloc1, bloc * bloc2){
+bloc* merge_bloc(bloc * bloc1, bloc * bloc2){
     // bloc1 should be before bloc 2 (address wise)
     bloc* second_bloc;
     bloc* first_bloc;
@@ -93,9 +93,16 @@ int merge_bloc(bloc * bloc1, bloc * bloc2){
 	second_bloc = bloc1;
     }
 
+    /* printf("first virt %d\n", first_bloc->virtual_start); */
+    /* printf("first size %d\n", first_bloc->size); */
+    /* printf("first next %X\n", first_bloc->next); */
+    /* printf("second virt %d\n", second_bloc->virtual_start); */
+    /* printf("--------------\n"); */
+
     // Verify both bloc are adjacent.
-    if (first_bloc->start + first_bloc->size != second_bloc->start) {
-	return -1;
+    if (first_bloc->next != second_bloc) {
+	printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! eerrorororor\n");
+	return NULL;
     }
 
     if(&LAST_BLOC_FIT == &second_bloc){
@@ -104,10 +111,13 @@ int merge_bloc(bloc * bloc1, bloc * bloc2){
 
     // Merge
     first_bloc->size += second_bloc->size;
+    if(second_bloc->next != NULL){
+	second_bloc->next->previous = first_bloc; 
+    }
     first_bloc->next = second_bloc->next;
     free(second_bloc);
 
-    return 1;
+    return first_bloc;
 }
 
 bloc* search_bloc_by_address(int pBloc){
@@ -130,21 +140,30 @@ bloc* search_bloc_by_address(int pBloc){
 int free_bloc(bloc* bloc_to_free){
     bloc_to_free->is_free = 1;
 
-    // Check if next bloc is free if so merge it
-    if(bloc_to_free->next != NULL && bloc_to_free->next->is_free == 1){
-	printf("merging bloc to free with next bloc \n");
-	merge_bloc(bloc_to_free, bloc_to_free->next);
-    }
 
-    // Check if previous bloc is free if so merge it
-    if(bloc_to_free->previous != NULL && bloc_to_free->previous->is_free == 1){
-	printf("merging bloc to free with previous bloc \n");
-	merge_bloc(bloc_to_free, bloc_to_free->previous);
+    int res = 1;
+    while (bloc_to_free != NULL){
+	// Check if next bloc is free if so merge it
+	if(bloc_to_free->next != NULL && bloc_to_free->next->is_free == 1){
+	    printf("merging bloc to free with next bloc \n");
+	    bloc_to_free = merge_bloc(bloc_to_free, bloc_to_free->next);
+
+	}else {
+	    break;
+	}
     }
-    
+    while (bloc_to_free != NULL){
+	// Check if previous bloc is free if so merge it
+	if(bloc_to_free->previous != NULL && bloc_to_free->previous->is_free == 1){
+	    printf("merging bloc to free with previous bloc \n");
+	    bloc_to_free = merge_bloc(bloc_to_free, bloc_to_free->previous);
+
+	}else{
+	    break;
+	}
+    }
     return 1;
 }
-
 
 /* PUBLIC FUNCTION */
 
@@ -170,16 +189,27 @@ int nblocalloues(){
     int counter_allocated_bloc = 0;
     bloc *current_bloc = FIRST_BLOC;
     
+    int cmpt = 0;
+    printf("HUMMMM\n");
     while(current_bloc->next != NULL){
 	if (current_bloc->is_free == 0){
 	    counter_allocated_bloc++;
 	}
+
+	printf("bloc virt: %d\n", current_bloc->virtual_start);
+	printf("bloc libre: %d\n", current_bloc->is_free);
+	printf("bloc size: %d\n", current_bloc->size);
 	current_bloc = current_bloc->next;
+	cmpt++;
     }
 
     if (current_bloc->is_free == 0){
 	counter_allocated_bloc ++;
     }
+
+    printf("bloc virt: %d\n", current_bloc->virtual_start);
+    printf("bloc libre: %d\n", current_bloc->is_free);
+    printf("bloc size: %d\n", current_bloc->size);
 
     return counter_allocated_bloc;
 }
