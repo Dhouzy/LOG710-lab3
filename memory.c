@@ -196,7 +196,7 @@ int nblocalloues(){
             counter_allocated_bloc++;
         }
 
-        printf("########## Stat bloc %i ########## \n",
+        printf("##### Stat bloc %i ########## \n",
                counter_allocated_bloc);
         printf("bloc virt: %d\n", current_bloc->virtual_start);
         printf("bloc libre: %d\n", current_bloc->is_free);
@@ -209,11 +209,11 @@ int nblocalloues(){
 	    counter_allocated_bloc ++;
     }
 
-    printf("########## Bloc restant ... ########## \n");
+    printf("##### Bloc restant ... ########## \n");
     printf("bloc virt: %d\n", current_bloc->virtual_start);
     printf("bloc libre: %d\n", current_bloc->is_free);
     printf("bloc size: %d\n", current_bloc->size);
-    printf("########## Fin bloc restant ########## \n");
+    printf("########## Fin detection ########## \n");
 
     return counter_allocated_bloc;
 }
