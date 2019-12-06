@@ -190,26 +190,30 @@ int nblocalloues(){
     bloc *current_bloc = FIRST_BLOC;
     
     int cmpt = 0;
-    printf("HUMMMM\n");
+    printf("########## Detection de memoire alloue ... ########## \n");
     while(current_bloc->next != NULL){
-	if (current_bloc->is_free == 0){
-	    counter_allocated_bloc++;
-	}
+        if (current_bloc->is_free == 0){
+            counter_allocated_bloc++;
+        }
 
-	printf("bloc virt: %d\n", current_bloc->virtual_start);
-	printf("bloc libre: %d\n", current_bloc->is_free);
-	printf("bloc size: %d\n", current_bloc->size);
-	current_bloc = current_bloc->next;
-	cmpt++;
+        printf("########## Stat bloc %i ########## \n",
+               counter_allocated_bloc);
+        printf("bloc virt: %d\n", current_bloc->virtual_start);
+        printf("bloc libre: %d\n", current_bloc->is_free);
+        printf("bloc size: %d\n", current_bloc->size);
+        current_bloc = current_bloc->next;
+        cmpt++;
     }
 
     if (current_bloc->is_free == 0){
-	counter_allocated_bloc ++;
+	    counter_allocated_bloc ++;
     }
 
+    printf("########## Bloc restant ... ########## \n");
     printf("bloc virt: %d\n", current_bloc->virtual_start);
     printf("bloc libre: %d\n", current_bloc->is_free);
     printf("bloc size: %d\n", current_bloc->size);
+    printf("########## Fin bloc restant ########## \n");
 
     return counter_allocated_bloc;
 }
